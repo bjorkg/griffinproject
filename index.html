@@ -4,6 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ARToF</title>
 <link rel="stylesheet" href="./styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div id="login" class="auth">
@@ -50,21 +51,13 @@
       <div class="heading"><h1>ARTOF STUDIO</h1><p>UPLOAD → SELECT → APPLY</p></div>
       <div class="studio">
         <div id="studioCats" class="cats"></div>
-        <div class="canvas">
-          <div id="renderPreview" class="renderPreview">
-            <div class="placeholder">SAVE A DRAFT TO GENERATE THE FIRST ARTOF RENDER</div>
-          </div>
-        </div>
+        <div class="canvas"><div id="renderPreview" class="renderPreview"><div class="placeholder">SAVE A DRAFT TO GENERATE THE FIRST ARTOF RENDER</div></div></div>
         <div class="panel">
           <input id="lookTitle" placeholder="UNTITLED LOOK">
-          <h3>BODY PRESET</h3>
-          <div id="bodyPresets"></div>
-          <h3 id="optionsTitle">OPTIONS</h3>
-          <div id="studioOptions"></div>
+          <h3>BODY PRESET</h3><div id="bodyPresets"></div>
+          <h3 id="optionsTitle">OPTIONS</h3><div id="studioOptions"></div>
           <h3>VISUAL REFERENCE</h3>
-          <select id="referenceCategory">
-            <option value="hair">HAIR</option><option value="top">TOP</option><option value="outerwear">OUTERWEAR</option><option value="bottom">BOTTOM</option><option value="shoes">SHOES</option><option value="accessories">ACCESSORIES</option><option value="makeup">MAKEUP</option><option value="pose">POSE</option><option value="background">BACKGROUND</option>
-          </select>
+          <select id="referenceCategory"><option value="hair">HAIR</option><option value="top">TOP</option><option value="outerwear">OUTERWEAR</option><option value="bottom">BOTTOM</option><option value="shoes">SHOES</option><option value="accessories">ACCESSORIES</option><option value="makeup">MAKEUP</option><option value="pose">POSE</option><option value="background">BACKGROUND</option></select>
           <input id="referenceFile" type="file" accept="image/jpeg,image/png,image/webp">
           <button id="uploadReferenceBtn">UPLOAD REFERENCE</button>
           <button id="applyReferenceBtn" class="dark" disabled>APPLY REFERENCE</button>
@@ -88,17 +81,8 @@
   </aside>
 </div>
 
-<dialog id="publishDialog">
-  <div class="dialogInner">
-    <button id="closeDialog" class="close">×</button>
-    <p>PUBLISH LOOK</p><h2>READY FOR ARTOF?</h2>
-    <textarea id="caption" placeholder="CAPTION"></textarea>
-    <select id="country"></select>
-    <div id="interestTags" class="tags"></div>
-    <button id="confirmPublish" class="dark">PUBLISH</button>
-  </div>
-</dialog>
+<dialog id="publishDialog"><div class="dialogInner"><button id="closeDialog" class="close">×</button><p>PUBLISH LOOK</p><h2>READY FOR ARTOF?</h2><textarea id="caption" placeholder="CAPTION"></textarea><select id="country"></select><div id="interestTags" class="tags"></div><button id="confirmPublish" class="dark">PUBLISH</button></div></dialog>
 
-<script type="module" src="./app.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
