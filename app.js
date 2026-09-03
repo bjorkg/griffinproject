@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const { createClient } = window.supabase;
 
 const URL="https://ynwxoperwcnfaovrqkft.supabase.co";
 const KEY="sb_publishable_HaL3A1nOF-1kVlEBgOGuLw_HNLDXzWj";
@@ -26,14 +26,17 @@ function bind(){
   $('#closeDialog').onclick=()=>$('#publishDialog').close();
   $('#confirmPublish').onclick=publishLook;
   $('#markRead').onclick=async()=>{await supabase.rpc('mark_all_notifications_read');await activity()};
+  $('#activityBtn').onclick=()=>document.querySelector('.right')?.scrollIntoView({behavior:'smooth'});
 }
 
 async function auth(e){
   e.preventDefault();$('#authMsg').textContent='WORKING...';
   const email=$('#email').value.trim(),password=$('#password').value,username=$('#username').value.trim();
   if(state.mode==='signup'){
-    const {error}=await supabase.auth.signUp({email,password,options:{data:{username}}});
-    $('#authMsg').textContent=error?error.message:'ACCOUNT CREATED. CHECK EMAIL IF CONFIRMATION IS REQUIRED.';
+    const {data,error}=await supabase.auth.signUp({email,password,options:{data:{username}}});
+    if(error){$('#authMsg').textContent=error.message;return}
+    if(data.session?.user){await enter(data.session.user);return}
+    $('#authMsg').textContent='ACCOUNT CREATED. CHECK EMAIL IF CONFIRMATION IS REQUIRED.';
   }else{
     const {data,error}=await supabase.auth.signInWithPassword({email,password});
     if(error)$('#authMsg').textContent=error.message;else if(data.user)await enter(data.user);
@@ -42,8 +45,8 @@ async function auth(e){
 
 async function enter(user){
   state.user=user;$('#login').classList.add('hidden');$('#app').classList.remove('hidden');
-  const {data}=await supabase.from('profiles').select('id,username,display_name,reputation_tier,country_id').eq('id',user.id).single();state.profile=data;
-  await Promise.all([loadFeed(),miniCharts(),activity(),loadCatalog(),loadCountries(),loadInterests()]);
+  const {data}=await supabase.from('profiles').select('id,username,display_name,reputation_tier,country_id').eq('id',user.id).maybeSingle();state.profile=data;
+  await Promise.allSettled([loadFeed(),miniCharts(),activity(),loadCatalog(),loadCountries(),loadInterests()]);
 }
 function leave(){state.user=null;$('#app').classList.add('hidden');$('#login').classList.remove('hidden')}
 
@@ -76,6 +79,7 @@ async function loadCatalog(){
   const o=await supabase.from('studio_options').select('id,category_id,slug,label,display_order').eq('active',true).order('display_order');state.options=o.data||[];
 }
 async function studio(){
+  if(!state.cats.length) await loadCatalog();
   $('#studioCats').innerHTML=state.cats.map(c=>'<button data-cat="'+c.slug+'" class="'+(c.slug===state.category?'active':'')+'">'+esc(c.label)+'</button>').join('');
   $$('#studioCats button').forEach(b=>b.onclick=()=>{state.category=b.dataset.cat;studio()});
   const bp=await supabase.from('body_presets').select('slug,label').eq('active',true).order('display_order');
@@ -88,12 +92,13 @@ async function studio(){
 }
 async function saveDraft(){
   const title=$('#lookTitle').value.trim()||'UNTITLED LOOK';$('#studioMsg').textContent='SAVING...';
-  if(!state.lookId){const {data,error}=await supabase.from('looks').insert({owner_user_id:state.user.id,title,body_preset:state.body,model_gender:'custom',state:'draft'}).select('id').single();if(error){$('#studioMsg').textContent=error.message;return}state.lookId=data.id}else{await supabase.from('looks').update({title}).eq('id',state.lookId)}
+  if(!state.lookId){const {data,error}=await supabase.from('looks').insert({owner_user_id:state.user.id,title,body_preset:state.body,model_gender:'custom',state:'draft'}).select('id').single();if(error){$('#studioMsg').textContent=error.message;return}state.lookId=data.id}else{const {error}=await supabase.from('looks').update({title}).eq('id',state.lookId);if(error){$('#studioMsg').textContent=error.message;return}}
   $('#renderLook').disabled=false;$('#publishLook').disabled=false;$('#studioMsg').textContent='DRAFT SAVED.';await renderLook()
 }
 async function chooseOption(slug){
   if(!state.lookId){await saveDraft();if(!state.lookId)return}
-  const {error}=await supabase.rpc('set_look_studio_option',{p_look_id:state.lookId,p_category_slug:state.category,p_option_slug:slug,p_reference_asset_id:null,p_custom_value_json:{},p_slot_key:'default'});
+  const slot=state.category==='accessories'||state.category==='makeup'?slug:'default';
+  const {error}=await supabase.rpc('set_look_studio_option',{p_look_id:state.lookId,p_category_slug:state.category,p_option_slug:slug,p_reference_asset_id:null,p_custom_value_json:{},p_slot_key:slot});
   if(error){$('#studioMsg').textContent=error.message;return}
   await renderLook();
 }
