@@ -1,44 +1,104 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Griffin Project</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARToF</title>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <header class="site-header">
-        <div class="logo">The Griffin Project</div>
-        <nav class="main-nav">
-            <a href="#mission">Nuestra Misión</a>
-            <a href="#solutions">Soluciones</a>
-            <a href="#insights">Perspectivas</a>
-        </nav>
-    </header>
+<div id="login" class="auth">
+  <div class="brand"><div class="logo">ARTOF</div><small>THE ART OF FASHION</small></div>
+  <form id="authForm" class="authCard">
+    <div class="authTabs"><button type="button" data-mode="login" class="active">SIGN IN</button><button type="button" data-mode="signup">CREATE ACCOUNT</button></div>
+    <input id="email" type="email" placeholder="EMAIL" required>
+    <input id="password" type="password" placeholder="PASSWORD" minlength="6" required>
+    <input id="username" placeholder="USERNAME" class="hidden">
+    <button class="dark">CONTINUE</button>
+    <div id="authMsg" class="msg"></div>
+  </form>
+</div>
 
-    <section class="hero">
-        <h1>Invirtiendo en un futuro mejor</h1>
-        <p>Impulsamos estrategias que buscan crecimiento y resiliencia.</p>
-        <a href="#mission" class="cta">Conoce más</a>
+<div id="app" class="hidden">
+  <aside class="left">
+    <div class="logo">ARTOF</div>
+    <nav>
+      <button data-page="home" class="active">HOME</button>
+      <button data-page="explore">EXPLORE</button>
+      <button data-page="create">CREATE</button>
+      <button data-page="charts">CHARTS</button>
+      <button data-page="companies">COMPANIES</button>
+      <button data-page="profile">PROFILE</button>
+    </nav>
+    <button id="logout" class="logout">SIGN OUT</button>
+  </aside>
+
+  <main>
+    <header><strong id="pageTitle">HOME</strong><button id="activityBtn">ACTIVITY</button></header>
+
+    <section id="homePage" class="page">
+      <div class="switch"><button data-feed="for_you" class="active">FOR YOU</button><button data-feed="following">FOLLOWING</button></div>
+      <div id="feed"></div>
     </section>
 
-    <section id="mission" class="content-section">
-        <h2>Nuestra Misión</h2>
-        <p>En The Griffin Project buscamos ofrecer herramientas y asesoría que ayuden a nuestros clientes a alcanzar sus objetivos financieros.</p>
+    <section id="explorePage" class="page hidden">
+      <div class="heading"><h1>EXPLORE</h1><p>TRENDING · FRESH FACES · RISING</p></div>
+      <div class="switch"><button data-discovery="trending" class="active">TRENDING</button><button data-discovery="fresh">FRESH FACES</button><button data-discovery="rising">RISING</button></div>
+      <div id="creatorGrid" class="grid"></div>
     </section>
 
-    <section id="solutions" class="content-section">
-        <h2>Soluciones</h2>
-        <p>Ofrecemos una amplia gama de soluciones de inversión adaptadas a las necesidades cambiantes del mercado global.</p>
+    <section id="createPage" class="page hidden">
+      <div class="heading"><h1>ARTOF STUDIO</h1><p>UPLOAD → SELECT → APPLY</p></div>
+      <div class="studio">
+        <div id="studioCats" class="cats"></div>
+        <div class="canvas">
+          <div id="renderPreview" class="renderPreview">
+            <div class="placeholder">SAVE A DRAFT TO GENERATE THE FIRST ARTOF RENDER</div>
+          </div>
+        </div>
+        <div class="panel">
+          <input id="lookTitle" placeholder="UNTITLED LOOK">
+          <h3>BODY PRESET</h3>
+          <div id="bodyPresets"></div>
+          <h3 id="optionsTitle">OPTIONS</h3>
+          <div id="studioOptions"></div>
+          <h3>VISUAL REFERENCE</h3>
+          <select id="referenceCategory">
+            <option value="hair">HAIR</option><option value="top">TOP</option><option value="outerwear">OUTERWEAR</option><option value="bottom">BOTTOM</option><option value="shoes">SHOES</option><option value="accessories">ACCESSORIES</option><option value="makeup">MAKEUP</option><option value="pose">POSE</option><option value="background">BACKGROUND</option>
+          </select>
+          <input id="referenceFile" type="file" accept="image/jpeg,image/png,image/webp">
+          <button id="uploadReferenceBtn">UPLOAD REFERENCE</button>
+          <button id="applyReferenceBtn" class="dark" disabled>APPLY REFERENCE</button>
+          <div id="referenceStatus" class="msg">NO REFERENCE ATTACHED.</div>
+          <button id="saveDraft" class="dark">SAVE DRAFT</button>
+          <button id="renderLook" disabled>RENDER LOOK</button>
+          <button id="publishLook" disabled>PUBLISH</button>
+          <div id="studioMsg" class="msg"></div>
+        </div>
+      </div>
     </section>
 
-    <section id="insights" class="content-section">
-        <h2>Perspectivas</h2>
-        <p>Mantente informado con nuestros análisis y comentarios sobre las tendencias más relevantes del mercado.</p>
-    </section>
+    <section id="chartsPage" class="page hidden"><div class="heading"><h1>CHARTS</h1><p>THIS WEEK</p></div><div id="charts"></div></section>
+    <section id="companiesPage" class="page hidden"><div class="heading"><h1>COMPANIES</h1><p>HOUSES · STUDIOS · AGENCIES · MAGAZINES</p></div><div id="companies" class="grid"></div></section>
+    <section id="profilePage" class="page hidden"><div id="profileHeader" class="profileHeader"></div><h3>MY LOOKS</h3><div id="myLooks" class="grid"></div></section>
+  </main>
 
-    <footer class="site-footer">
-        <p>&copy; 2025 The Griffin Project. Todos los derechos reservados.</p>
-    </footer>
+  <aside class="right">
+    <section><div class="railTitle"><b>CHARTS</b></div><div id="miniCharts"></div></section>
+    <section><div class="railTitle"><b>ACTIVITY</b><button id="markRead">MARK READ</button></div><div id="activity"></div></section>
+  </aside>
+</div>
+
+<dialog id="publishDialog">
+  <div class="dialogInner">
+    <button id="closeDialog" class="close">×</button>
+    <p>PUBLISH LOOK</p><h2>READY FOR ARTOF?</h2>
+    <textarea id="caption" placeholder="CAPTION"></textarea>
+    <select id="country"></select>
+    <div id="interestTags" class="tags"></div>
+    <button id="confirmPublish" class="dark">PUBLISH</button>
+  </div>
+</dialog>
+
+<script type="module" src="./app.js"></script>
 </body>
 </html>
